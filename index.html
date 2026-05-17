@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Rozkład Córek – dla Babci 💛</title>
+<title>Rozkład Jazdy – Honeymoon rodziców 💛</title>
 <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
 <style>
   :root {
@@ -183,6 +183,13 @@
     min-height: 28px;
   }
   .td-cell input::placeholder, .td-cell textarea::placeholder { color: #B0BEC5; }
+  
+  /* textarea dla zajęć */
+  .td-cell textarea {
+    min-height: 80px;
+    padding: 4px;
+  }
+
   .td-notes {
     padding: 6px 8px;
     vertical-align: top;
@@ -382,7 +389,7 @@
 <body>
 
 <div class="hero">
-  <h1>📅 Rozkład Córek &nbsp;✨&nbsp; Wakacje 2025</h1>
+  <h1>📅 Rozkład Jazdy &nbsp;✨&nbsp; Honeymoon rodziców</h1>
   <p>20 maja – 10 czerwca &nbsp;|&nbsp; Rozkład dla Babci 💛</p>
 </div>
 
@@ -462,6 +469,7 @@ const WEEKS = [
 
 const SUB = ["Szkoła (od–do)", "Zajęcia pozalekcyjne", "Godz. zajęć", "Odbiór: skąd?"];
 const KEY_MAP = ["szkola","zajecia","godziny","odbior"];
+const FIELD_TYPES = ["text", "textarea", "text", "text"];
 
 let currentWeek = 0;
 let hiddenGirls = new Set();
@@ -556,11 +564,19 @@ function buildGrid() {
         const key = sk(currentWeek, di, gi, field);
         const val = load(key);
         const ph  = fi===0 ? "np. 8:00–13:30" : fi===1 ? "np. Angielski" : fi===2 ? "np. 15:00–16:00" : "np. ul. Różana";
-        html += `<td class="td-cell" style="background:${isWeekend?'#F0F0F0':g.bg}">
-          <input type="text" placeholder="${ph}" value="${val.replace(/"/g,'&quot;')}"
-            onchange="save('${key}',this.value)"
-            oninput="save('${key}',this.value)">
-        </td>`;
+        const fieldType = FIELD_TYPES[fi];
+        
+        if (fieldType === "textarea") {
+          html += `<td class="td-cell" style="background:${isWeekend?'#F0F0F0':g.bg}">
+            <textarea placeholder="${ph}" onchange="save('${key}',this.value)" oninput="save('${key}',this.value)">${val}</textarea>
+          </td>`;
+        } else {
+          html += `<td class="td-cell" style="background:${isWeekend?'#F0F0F0':g.bg}">
+            <input type="text" placeholder="${ph}" value="${val.replace(/"/g,'&quot;')}"
+              onchange="save('${key}',this.value)"
+              oninput="save('${key}',this.value)">
+          </td>`;
+        }
       });
     });
 
