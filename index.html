@@ -162,6 +162,8 @@
     position: sticky;
     left: 0;
     z-index: 2;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   .td-day .date-sub { font-size: 10px; font-weight: 600; opacity: .6; display: block; margin-top: 2px; }
   .td-cell {
@@ -180,6 +182,9 @@
     resize: none;
     outline: none;
     text-align: center;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
     min-height: 28px;
   }
   .td-cell input::placeholder, .td-cell textarea::placeholder { color: #B0BEC5; }
@@ -206,6 +211,9 @@
     color: #546E7A;
     resize: none;
     outline: none;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
+    white-space: normal;
     min-height: 60px;
   }
 
@@ -277,6 +285,8 @@
     outline: none;
     color: var(--gray);
     background: transparent;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   .contact-val input:focus { color: var(--dark); }
 
@@ -311,6 +321,8 @@
     min-width: 200px;
     padding: 2px 4px;
     background: transparent;
+    word-wrap: break-word;
+    overflow-wrap: break-word;
   }
   .rule-val input:focus { border-bottom-color: var(--dark); }
 
@@ -447,13 +459,13 @@ const GIRLS = [
 ];
 
 const DAYS = [
-  { name:"Poniedziałek", short:"Pon", weekend:false },
-  { name:"Wtorek",       short:"Wt",  weekend:false },
   { name:"Środa",        short:"Śr",  weekend:false },
   { name:"Czwartek",     short:"Czw", weekend:false },
   { name:"Piątek",       short:"Pt",  weekend:false },
   { name:"Sobota",       short:"Sob", weekend:true  },
   { name:"Niedziela",    short:"Nd",  weekend:true  },
+  { name:"Poniedziałek", short:"Pon", weekend:false },
+  { name:"Wtorek",       short:"Wt",  weekend:false },
 ];
 
 const WEEKS = [
