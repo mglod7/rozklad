@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rozkład Córek – dla Babci 💛</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ania:   #E65100; --ania-bg: #FFF3E0; --ania-mid: #FFB74D;
+    --zosia:  #2E7D32; --zosia-bg: #E8F5E9; --zosia-mid: #66BB6A;
+    --marysia:#1565C0; --marysia-bg:#E3F2FD; --marysia-mid:#42A5F5;
+    --basia:  #6A1B9A; --basia-bg: #F3E5F5; --basia-mid:#AB47BC;
+    --bg: #FAFAFA;
+    --dark: #263238;
+    --gray: #78909C;
+    --card: #FFFFFF;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .hero {
+    background: linear-gradient(135deg, #37474F 0%, #263238 100%);
+    padding: 36px 24px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(255,183,77,.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(171,71,188,.15) 0%, transparent 60%);
+  }
+  .hero h1 {
+    font-family: 'Quicksand', sans-serif;
+    font-size: clamp(22px, 5vw, 34px);
+    font-weight: 700;
+    color: #fff;
+    position: relative;
+  }
+  .hero p {
+    color: #B0BEC5;
+    margin-top: 6px;
+    font-size: 14px;
+    position: relative;
+  }
+
+  /* ── WEEK TABS ── */
+  .week-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 18px 16px 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .week-tab {
+    flex-shrink: 0;
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 2px solid #CFD8DC;
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .week-tab.active {
+    background: var(--dark);
+    border-color: var(--dark);
+    color: white;
+  }
+  .week-tab:hover:not(.active) { border-color: var(--dark); color: var(--dark); }
+
+  /* ── GIRL LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 16px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all .2s;
+    opacity: 1;
+  }
+  .legend-item.dim { opacity: .35; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+  /* ── GRID ── */
+  .grid-wrap {
+    padding: 0 16px 80px;
+    overflow-x: auto;
+  }
+  .schedule-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  /* header rows */
+  .th-day {
+    width: 110px;
+    min-width: 110px;
+  }
+  .th-girl {
+    text-align: center;
+    padding: 12px 6px 8px;
+    font-size: 15px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: .3px;
+  }
+  .th-sub {
+    text-align: center;
+    padding: 6px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,.85);
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,.2);
+  }
+  .th-notes {
+    text-align: center;
+    padding: 12px 8px;
+    font-size: 13px;
+    color: var(--gray);
+  }
+
+  /* day cells */
+  .day-cell {
+    border: 1px solid #ECEFF1;
+    padding: 10px;
+    min-height: 84px;
+    vertical-align: top;
+    background: var(--card);
+  }
+  .day-label {
+    font-weight: 800;
+    font-size: 14px;
+    margin-bottom: 6px;
+  }
+  .date-small { font-weight: 700; color: var(--gray); font-size: 12px; }
+
+  /* responsive */
+  @media (max-width: 860px) {
+    .schedule-table { min-width: 760px; }
+    .th-day { min-width: 95px; }
+  }
+
+</style>
+</head>
+<body>
+  <header class="hero">
+    <h1>Rozkład Córek – dla Babci</h1>
+    <p>Widok tygodniowy (poniedziałek – niedziela). Pierwszy tydzień może zaczynać się od środy.</p>
+    <div class="week-tabs" id="weekTabs"></div>
+  </header>
+
+  <section class="legend" id="legend">
+    <div class="legend-item"><span class="legend-dot" style="background:var(--ania);"></span>Ania</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--zosia);"></span>Zosia</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--marysia);"></span>Marysia</div>
+    <div class="legend-item"><span class="legend-dot" style="background:var(--basia);"></span>Basia</div>
+  </section>
+
+  <div class="grid-wrap">
+    <table class="schedule-table" id="scheduleTable">
+      <!-- table will be generated by JS -->
+    </table>
+  </div>
+
+<script>
+// Utility: format date in Polish short form dd.mm
+function fmt(d){
+  const day = String(d.getDate()).padStart(2,'0');
+  const month = String(d.getMonth()+1).padStart(2,'0');
+  return day + '.' + month;
+}
+
+// Polish weekday names starting Monday
+const weekdays = ['Pon','Wt','Śr','Czw','Pt','Sob','Nd'];
+
+// Example: schedule range. You can change these dates or compute from data.
+// First date may be mid-week (e.g., Wednesday) — we'll allow that.
+const firstDate = new Date(2026,6,1); // 2026-07-01 (środa)
+const lastDate  = new Date(2026,6,31); // 2026-07-31
+
+// Build weeks that END on Sunday. First week starts at firstDate (even if not Monday).
+function buildWeeks(start, end){
+  const weeks = [];
+  // Normalize times
+  let curStart = new Date(start.getFullYear(), start.getMonth(), start.getDate());
+  // first week end: the next Sunday (day 0)
+  const firstWeekEnd = new Date(curStart);
+  const daysToSunday = (7 - curStart.getDay()) % 7; // if curStart is Sunday (0) -> 0
+  firstWeekEnd.setDate(curStart.getDate() + daysToSunday);
+  if (firstWeekEnd > end) firstWeekEnd.setTime(end.getTime());
+  weeks.push({start: new Date(curStart), end: new Date(firstWeekEnd)});
+
+  // next weeks: start on Monday and end on Sunday
+  let nextStart = new Date(firstWeekEnd);
+  nextStart.setDate(firstWeekEnd.getDate() + 1); // Monday (maybe)
+
+  while (nextStart <= end){
+    const nextEnd = new Date(nextStart);
+    nextEnd.setDate(nextStart.getDate() + 6); // sunday
+    if (nextEnd > end) nextEnd.setTime(end.getTime());
+    weeks.push({start: new Date(nextStart), end: new Date(nextEnd)});
+    nextStart = new Date(nextEnd);
+    nextStart.setDate(nextEnd.getDate() + 1);
+  }
+  return weeks;
+}
+
+const weeks = buildWeeks(firstDate, lastDate);
+
+// Render week tabs
+const weekTabs = document.getElementById('weekTabs');
+weeks.forEach((w,i) =>{
+  const btn = document.createElement('button');
+  btn.className = 'week-tab' + (i===0? ' active':'');
+  const label = (i===0)
+    ? `Tydz ${fmt(w.start)} – ${fmt(w.end)}`
+    : `Tydz ${fmt(w.start)} – ${fmt(w.end)}`;
+  btn.textContent = label;
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.week-tab').forEach(t=>t.classList.remove('active'));
+    btn.classList.add('active');
+    renderWeek(w);
+  });
+  weekTabs.appendChild(btn);
+});
+
+// Render schedule table for a week (Mon-Sun columns). If the week starts mid-week, earlier days are shown but empty.
+function renderWeek(week){
+  const table = document.getElementById('scheduleTable');
+  table.innerHTML = '';
+
+  // header row: day names + dates for Mon..Sun
+  const thead = document.createElement('thead');
+  const hRow = document.createElement('tr');
+
+  // first empty corner cell
+  const corner = document.createElement('th');
+  corner.className = 'th-day';
+  corner.innerHTML = '<div class="th-notes">Dzień</div>';
+  hRow.appendChild(corner);
+
+  // compute Monday of the displayed week: we want columns Mon..Sun
+  // If week.start is not Monday and it's the first week, we still show Mon..Sun but dates before week.start will be empty (or from previous month)
+  // Determine the Monday that belongs to this calendar row:
+  const monday = new Date(week.start);
+  // If week.start is already Monday => monday = week.start
+  // Else if week.start is later in week, we need the Monday before it
+  const dayNum = monday.getDay(); // 0 Sun .. 6 Sat
+  const diffToMonday = (dayNum === 0) ? -6 : (1 - dayNum); // if Sunday -> previous Monday
+  monday.setDate(monday.getDate() + diffToMonday);
+
+  // create 7 day headers
+  const days = [];
+  for (let j=0;j<7;j++){
+    const d = new Date(monday);
+    d.setDate(monday.getDate() + j);
+    days.push(d);
+    const th = document.createElement('th');
+    th.className = 'th-girl';
+    th.innerHTML = `<div>${weekdays[j]}</div><div class="th-sub">${fmt(d)}</div>`;
+    hRow.appendChild(th);
+  }
+  thead.appendChild(hRow);
+  table.appendChild(thead);
+
+  // body: single row with day cells (you can extend to multiple rows/girls)
+  const tbody = document.createElement('tbody');
+  const row = document.createElement('tr');
+  // label cell
+  const labelCell = document.createElement('td');
+  labelCell.className = 'day-cell';
+  labelCell.style.width = '140px';
+  labelCell.innerHTML = '<div class="date-small">Tydzień</div><div style="font-weight:800">' + fmt(week.start) + ' – ' + fmt(week.end) + '</div>';
+  row.appendChild(labelCell);
+
+  // day cells Mon..Sun
+  days.forEach(d=>{
+    const cell = document.createElement('td');
+    cell.className = 'day-cell';
+    const isInRange = (d >= startOfDay(week.start) && d <= endOfDay(week.end));
+    // show date and optionally mark out-of-range days
+    cell.innerHTML = `<div class="date-small">${d.toLocaleDateString('pl-PL', {weekday:'long'})}</div><div class="day-label">${fmt(d)}</div>`;
+    if (!isInRange){
+      cell.style.opacity = 0.35;
+    }
+    row.appendChild(cell);
+  });
+
+  tbody.appendChild(row);
+  table.appendChild(tbody);
+}
+
+function startOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function endOfDay(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate(), 23,59,59,999); }
+
+// initial render of first week
+renderWeek(weeks[0]);
+
+</script>
+</body>
+</html>
