@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Rozkład Córek – dla Babci 💛</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;600;700;800;900&family=Quicksand:wght@500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ania:   #E65100; --ania-bg: #FFF3E0; --ania-mid: #FFB74D;
+    --zosia:  #2E7D32; --zosia-bg: #E8F5E9; --zosia-mid: #66BB6A;
+    --marysia:#1565C0; --marysia-bg:#E3F2FD; --marysia-mid:#42A5F5;
+    --basia:  #6A1B9A; --basia-bg: #F3E5F5; --basia-mid:#AB47BC;
+    --bg: #FAFAFA;
+    --dark: #263238;
+    --gray: #78909C;
+    --card: #FFFFFF;
+    --radius: 16px;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    font-family: 'Nunito', sans-serif;
+    background: var(--bg);
+    color: var(--dark);
+    min-height: 100vh;
+  }
+
+  /* ── HEADER ── */
+  .hero {
+    background: linear-gradient(135deg, #37474F 0%, #263238 100%);
+    padding: 36px 24px 28px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+  }
+  .hero::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(ellipse at 20% 50%, rgba(255,183,77,.15) 0%, transparent 60%),
+                radial-gradient(ellipse at 80% 50%, rgba(171,71,188,.15) 0%, transparent 60%);
+  }
+  .hero h1 {
+    font-family: 'Quicksand', sans-serif;
+    font-size: clamp(22px, 5vw, 34px);
+    font-weight: 700;
+    color: #fff;
+    position: relative;
+  }
+  .hero p {
+    color: #B0BEC5;
+    margin-top: 6px;
+    font-size: 14px;
+    position: relative;
+  }
+
+  /* ── WEEK TABS ── */
+  .week-tabs {
+    display: flex;
+    gap: 8px;
+    padding: 18px 16px 0;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .week-tab {
+    flex-shrink: 0;
+    padding: 10px 20px;
+    border-radius: 50px;
+    border: 2px solid #CFD8DC;
+    background: white;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--gray);
+    cursor: pointer;
+    transition: all .2s;
+  }
+  .week-tab.active {
+    background: var(--dark);
+    border-color: var(--dark);
+    color: white;
+  }
+  .week-tab:hover:not(.active) { border-color: var(--dark); color: var(--dark); }
+
+  /* ── GIRL LEGEND ── */
+  .legend {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    padding: 14px 16px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 14px;
+    border-radius: 50px;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: all .2s;
+    opacity: 1;
+  }
+  .legend-item.dim { opacity: .35; }
+  .legend-dot { width: 12px; height: 12px; border-radius: 50%; }
+
+  /* ── GRID ── */
+  .grid-wrap {
+    padding: 0 16px 80px;
+    overflow-x: auto;
+  }
+  .schedule-table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: separate;
+    border-spacing: 0;
+  }
+
+  /* header rows */
+  .th-day {
+    width: 110px;
+    min-width: 110px;
+  }
+  .th-girl {
+    text-align: center;
+    padding: 12px 6px 8px;
+    font-size: 15px;
+    font-weight: 800;
+    color: white;
+    letter-spacing: .3px;
+  }
+  .th-sub {
+    text-align: center;
+    padding: 6px 4px;
+    font-size: 11px;
+    font-weight: 700;
+    color: rgba(255,255,255,.85);
+    letter-spacing: .5px;
+    text-transform: uppercase;
+    border-top: 1px solid rgba(255,255,255,.2);
+  }
+  .th-notes {
+    text-align: center;
+    padding: 12px 6px;
+    font-size: 12px;
+    font-weight: 700;
+    color: #fff;
+    background: #546E7A;
+    vertical-align: middle;
+  }
+
+  /* day rows */
+  .td-day {
+    padding: 12px 10px;
+    font-weight: 800;
+    font-size: 13px;
+    text-align: center;
+    border-right: 3px solid #E0E0E0;
+    position: sticky;
+    left: 0;
+    z-index: 2;
+  }
+  .td-day .date-sub { font-size: 10px; font-weight: 600; opacity: .6; display: block; margin-top: 2px; }
+  .td-cell {
+    padding: 6px 6px;
+    vertical-align: top;
+    border: 1px solid rgba(0,0,0,.06);
+    min-width: 110px;
+  }
+  .td-cell input, .td-cell textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    color: var(--dark);
+    resize: none;
+    outline: none;
+    text-align: center;
+    min-height: 28px;
+  }
+  .td-cell input::placeholder, .td-cell textarea::placeholder { color: #B0BEC5; }
+  .td-notes {
+    padding: 6px 8px;
+    vertical-align: top;
+    min-width: 140px;
+    border: 1px solid rgba(0,0,0,.06);
+    background: #F5F7FA;
+  }
+  .td-notes textarea {
+    width: 100%;
+    border: none;
+    background: transparent;
+    font-family: 'Nunito', sans-serif;
+    font-size: 12px;
+    color: #546E7A;
+    resize: none;
+    outline: none;
+    min-height: 60px;
+  }
+
+  /* weekend */
+  .row-weekend .td-day { color: #90A4AE !important; }
+  .row-weekend .td-cell { filter: brightness(.94) saturate(.4); }
+
+  /* field group */
+  .field-group {
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+    height: 100%;
+  }
+  .field-label {
+    font-size: 10px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+    color: var(--gray);
+    margin-top: 6px;
+  }
+  .field-label:first-child { margin-top: 0; }
+
+  /* ── CONTACTS PANEL ── */
+  .panel-section {
+    margin: 0 16px 16px;
+    background: white;
+    border-radius: var(--radius);
+    overflow: hidden;
+    box-shadow: 0 2px 12px rgba(0,0,0,.06);
+  }
+  .panel-section-header {
+    padding: 14px 20px;
+    font-weight: 800;
+    font-size: 15px;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .panel-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 0;
+  }
+  @media(max-width: 600px) { .panel-grid { grid-template-columns: 1fr; } }
+
+  .contact-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    border-bottom: 1px solid #F0F0F0;
+    font-size: 13px;
+  }
+  .contact-label {
+    padding: 10px 16px;
+    font-weight: 700;
+    color: var(--dark);
+    border-right: 1px solid #F0F0F0;
+  }
+  .contact-val {
+    padding: 10px 16px;
+  }
+  .contact-val input {
+    width: 100%;
+    border: none;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    outline: none;
+    color: var(--gray);
+    background: transparent;
+  }
+  .contact-val input:focus { color: var(--dark); }
+
+  /* girl panels */
+  .girl-panel {
+    padding: 16px 20px;
+    border-bottom: 1px solid #F0F0F0;
+  }
+  .girl-panel:last-child { border-bottom: none; }
+  .girl-panel h3 {
+    font-size: 14px;
+    font-weight: 800;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .rule-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 6px;
+    font-size: 13px;
+  }
+  .rule-label { color: var(--gray); font-weight: 600; min-width: 180px; }
+  .rule-val input {
+    border: none;
+    border-bottom: 2px solid #E0E0E0;
+    font-family: 'Nunito', sans-serif;
+    font-size: 13px;
+    outline: none;
+    min-width: 200px;
+    padding: 2px 4px;
+    background: transparent;
+  }
+  .rule-val input:focus { border-bottom-color: var(--dark); }
+
+  /* ── NAV TABS ── */
+  .nav {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background: white;
+    border-bottom: 1px solid #ECEFF1;
+    display: flex;
+    gap: 0;
+    padding: 0 16px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+  }
+  .nav-tab {
+    padding: 14px 18px;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--gray);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all .2s;
+    white-space: nowrap;
+  }
+  .nav-tab.active { color: var(--dark); border-bottom-color: var(--dark); }
+
+  .page { display: none; }
+  .page.active { display: block; }
+
+  /* ── PRINT BTN ── */
+  .fab {
+    position: fixed;
+    bottom: 24px;
+    right: 24px;
+    padding: 14px 24px;
+    background: var(--dark);
+    color: white;
+    border: none;
+    border-radius: 50px;
+    font-family: 'Nunito', sans-serif;
+    font-weight: 800;
+    font-size: 14px;
+    cursor: pointer;
+    box-shadow: 0 4px 20px rgba(0,0,0,.25);
+    z-index: 100;
+    transition: transform .15s;
+  }
+  .fab:hover { transform: scale(1.05); }
+
+  @media print {
+    .hero, .nav, .fab, .week-tabs, .legend { display: none; }
+    .page { display: block !important; }
+    .schedule-table { min-width: unset; font-size: 10px; }
+  }
+
+  /* entrance animation */
+  .grid-wrap { animation: fadeUp .4s ease both; }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(12px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  .badge {
+    display: inline-block;
+    padding: 2px 8px;
+    border-radius: 50px;
+    font-size: 11px;
+    font-weight: 700;
+    color: white;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+</style>
+</head>
+<body>
+
+<div class="hero">
+  <h1>📅 Rozkład Córek &nbsp;✨&nbsp; Wakacje 2025</h1>
+  <p>20 maja – 10 czerwca &nbsp;|&nbsp; Rozkład dla Babci 💛</p>
+</div>
+
+<nav class="nav">
+  <div class="nav-tab active" onclick="showPage('schedule')">📅 Rozkład</div>
+  <div class="nav-tab" onclick="showPage('contacts')">📞 Kontakty</div>
+  <div class="nav-tab" onclick="showPage('rules')">🏠 Zasady</div>
+</nav>
+
+<!-- ════════════════ PAGE: ROZKŁAD ════════════════ -->
+<div class="page active" id="page-schedule">
+
+  <div class="week-tabs" id="weekTabs"></div>
+
+  <div style="padding: 10px 16px 0;">
+    <div class="legend" id="legend"></div>
+  </div>
+
+  <div class="grid-wrap" id="gridWrap"></div>
+</div>
+
+<!-- ════════════════ PAGE: KONTAKTY ════════════════ -->
+<div class="page" id="page-contacts">
+  <div style="padding: 16px 0 0;">
+
+  <div class="panel-section">
+    <div class="panel-section-header" style="background:#B71C1C;">📞 Kontakty awaryjne & ważne numery</div>
+    <div id="contactsList"></div>
+  </div>
+
+  </div>
+</div>
+
+<!-- ════════════════ PAGE: ZASADY ════════════════ -->
+<div class="page" id="page-rules">
+  <div style="padding: 16px 0 0;">
+
+  <div class="panel-section">
+    <div class="panel-section-header" style="background:#1565C0;">🏠 Zasady domowe & ważne informacje dla Babci</div>
+    <div id="rulesList"></div>
+  </div>
+
+  </div>
+</div>
+
+<button class="fab" onclick="window.print()">🖨️ Drukuj / PDF</button>
+
+<script>
+// ── dane ──────────────────────────────────────────────────────────────────────
+const GIRLS = [
+  { name:"Ania",    age:7,  color:"#E65100", bg:"#FFF3E0", mid:"#FFB74D", emoji:"🎀" },
+  { name:"Zosia",   age:14, color:"#2E7D32", bg:"#E8F5E9", mid:"#66BB6A", emoji:"📚" },
+  { name:"Marysia", age:17, color:"#1565C0", bg:"#E3F2FD", mid:"#42A5F5", emoji:"🎓" },
+  { name:"Basia",   age:18, color:"#6A1B9A", bg:"#F3E5F5", mid:"#AB47BC", emoji:"🎓" },
+];
+
+const DAYS = [
+  { name:"Poniedziałek", short:"Pon", weekend:false },
+  { name:"Wtorek",       short:"Wt",  weekend:false },
+  { name:"Środa",        short:"Śr",  weekend:false },
+  { name:"Czwartek",     short:"Czw", weekend:false },
+  { name:"Piątek",       short:"Pt",  weekend:false },
+  { name:"Sobota",       short:"Sob", weekend:true  },
+  { name:"Niedziela",    short:"Nd",  weekend:true  },
+];
+
+const WEEKS = [
+  { label:"Tydzień 1", dates:"20.05 – 26.05",
+    dayDates:["20.05","21.05","22.05","23.05","24.05","25.05","26.05"] },
+  { label:"Tydzień 2", dates:"27.05 – 02.06",
+    dayDates:["27.05","28.05","29.05","30.05","31.05","01.06","02.06"] },
+  { label:"Tydzień 3", dates:"03.06 – 09.06",
+    dayDates:["03.06","04.06","05.06","06.06","07.06","08.06","09.06"] },
+  { label:"Tydzień 4", dates:"10.06",
+    dayDates:["10.06","—","—","—","—","—","—"] },
+];
+
+const SUB = ["Szkoła (od–do)", "Zajęcia pozalekcyjne", "Godz. zajęć", "Odbiór: skąd?"];
+const KEY_MAP = ["szkola","zajecia","godziny","odbior"];
+
+let currentWeek = 0;
+let hiddenGirls = new Set();
+
+// ── storage key ───────────────────────────────────────────────────────────────
+function sk(week, day, girl, field) {
+  return `rozklad_${week}_${day}_${girl}_${field}`;
+}
+
+function save(key, val) {
+  try { localStorage.setItem(key, val); } catch(e){}
+}
+function load(key) {
+  try { return localStorage.getItem(key) || ""; } catch(e){ return ""; }
+}
+
+// ── legend ────────────────────────────────────────────────────────────────────
+function buildLegend() {
+  const el = document.getElementById("legend");
+  el.innerHTML = "";
+  GIRLS.forEach((g, i) => {
+    const div = document.createElement("div");
+    div.className = "legend-item" + (hiddenGirls.has(i) ? " dim" : "");
+    div.style.background = g.bg;
+    div.style.borderColor = hiddenGirls.has(i) ? "#E0E0E0" : g.color;
+    div.innerHTML = `<span class="legend-dot" style="background:${g.color}"></span>${g.emoji} ${g.name} <span class="badge" style="background:${g.color}">${g.age} l.</span>`;
+    div.onclick = () => {
+      if (hiddenGirls.has(i)) hiddenGirls.delete(i);
+      else hiddenGirls.add(i);
+      buildLegend();
+      buildGrid();
+    };
+    el.appendChild(div);
+  });
+}
+
+// ── week tabs ─────────────────────────────────────────────────────────────────
+function buildWeekTabs() {
+  const el = document.getElementById("weekTabs");
+  el.innerHTML = "";
+  WEEKS.forEach((w, i) => {
+    const btn = document.createElement("button");
+    btn.className = "week-tab" + (i === currentWeek ? " active" : "");
+    btn.innerHTML = `${w.label}<br><small style="font-weight:600;opacity:.7">${w.dates}</small>`;
+    btn.onclick = () => { currentWeek = i; buildWeekTabs(); buildGrid(); };
+    el.appendChild(btn);
+  });
+}
+
+// ── main grid ─────────────────────────────────────────────────────────────────
+function buildGrid() {
+  const week = WEEKS[currentWeek];
+  const visibleGirls = GIRLS.filter((_, i) => !hiddenGirls.has(i));
+  const visibleIdx   = GIRLS.map((_,i)=>i).filter(i => !hiddenGirls.has(i));
+
+  let html = `<table class="schedule-table"><thead>`;
+
+  // row 1 – girl names
+  html += `<tr>
+    <th class="th-day th-notes" rowspan="2" style="text-align:center;vertical-align:middle;font-size:11px;font-weight:700;background:#37474F;color:#fff">Dzień</th>`;
+  visibleIdx.forEach(i => {
+    const g = GIRLS[i];
+    html += `<th class="th-girl" colspan="4" style="background:${g.color}">
+      ${g.emoji} ${g.name} <span style="opacity:.75;font-size:12px;font-weight:600">(${g.age} l.)</span>
+    </th>`;
+  });
+  html += `<th class="th-notes" rowspan="2">📝 Uwagi dnia</th></tr>`;
+
+  // row 2 – sub-headers
+  html += `<tr>`;
+  visibleIdx.forEach(i => {
+    const g = GIRLS[i];
+    SUB.forEach(s => {
+      html += `<th class="th-sub" style="background:${g.color}">${s}</th>`;
+    });
+  });
+  html += `</tr></thead><tbody>`;
+
+  // day rows
+  DAYS.forEach((day, di) => {
+    const isWeekend = day.weekend;
+    const dateStr = week.dayDates[di];
+    html += `<tr class="${isWeekend ? 'row-weekend' : ''}">
+      <td class="td-day" style="background:${isWeekend?'#ECEFF1':'#F5F7FA'};color:${isWeekend?'#90A4AE':'#263238'}">
+        ${day.name}
+        <span class="date-sub">${dateStr}</span>
+      </td>`;
+
+    visibleIdx.forEach(gi => {
+      const g = GIRLS[gi];
+      KEY_MAP.forEach((field, fi) => {
+        const key = sk(currentWeek, di, gi, field);
+        const val = load(key);
+        const ph  = fi===0 ? "np. 8:00–13:30" : fi===1 ? "np. Angielski" : fi===2 ? "np. 15:00–16:00" : "np. ul. Różana";
+        html += `<td class="td-cell" style="background:${isWeekend?'#F0F0F0':g.bg}">
+          <input type="text" placeholder="${ph}" value="${val.replace(/"/g,'&quot;')}"
+            onchange="save('${key}',this.value)"
+            oninput="save('${key}',this.value)">
+        </td>`;
+      });
+    });
+
+    const noteKey = `rozklad_note_${currentWeek}_${di}`;
+    const noteVal = load(noteKey);
+    html += `<td class="td-notes">
+      <textarea placeholder="Notatka na ten dzień…" onchange="save('${noteKey}',this.value)" oninput="save('${noteKey}',this.value)">${noteVal}</textarea>
+    </td>`;
+
+    html += `</tr>`;
+  });
+
+  html += `</tbody></table>`;
+  document.getElementById("gridWrap").innerHTML = html;
+}
+
+// ── contacts ──────────────────────────────────────────────────────────────────
+const CONTACTS = [
+  ["Mama (urlop) 🌴", "Telefon mamy"],
+  ["Tata (urlop) 🌴",  "Telefon taty"],
+  ["Lekarz rodzinny",  "Numer / adres"],
+  ["Pediatra (Ania)",  "Numer / adres"],
+  ["Szkoła – Ania",    "Numer szkoły"],
+  ["Szkoła – Zosia",   "Numer szkoły"],
+  ["Szkoła – Marysia/Basia", "Numer szkoły"],
+  ["Sąsiedzi / znajomi", "Numer / imię"],
+  ["Pogotowie",        "999 / 112"],
+  ["Straż pożarna",    "998 / 112"],
+  ["Policja",          "997 / 112"],
+  ["Apteka całodobowa","Adres apteki"],
+];
+
+function buildContacts() {
+  const el = document.getElementById("contactsList");
+  el.innerHTML = CONTACTS.map((c, i) => {
+    const key = `contact_${i}`;
+    const val = load(key) || (i >= 8 ? c[1] : "");
+    const bg = i % 2 === 0 ? "#FAFAFA" : "white";
+    const readonly = i >= 8 ? "readonly" : "";
+    return `<div class="contact-row" style="background:${bg}">
+      <div class="contact-label">${c[0]}</div>
+      <div class="contact-val">
+        <input type="text" placeholder="${c[1]}" value="${val.replace(/"/g,'&quot;')}"
+          ${readonly}
+          onchange="save('${key}',this.value)"
+          oninput="save('${key}',this.value)">
+      </div>
+    </div>`;
+  }).join("");
+}
+
+// ── rules ─────────────────────────────────────────────────────────────────────
+const GIRL_RULES = [
+  { girl: GIRLS[0], fields: ["Pora snu","Alergie / leki","Ulubione jedzenie","Czego nie lubi","Kontakt ze szkołą","Inne uwagi"] },
+  { girl: GIRLS[1], fields: ["Pora snu","Alergie / leki","Kieszonkowe (zł/tydz.)","Godzina powrotu do domu","Inne uwagi"] },
+  { girl: GIRLS[2], fields: ["Pora snu","Alergie / leki","Kieszonkowe (zł/tydz.)","Godzina powrotu do domu","Inne uwagi"] },
+  { girl: GIRLS[3], fields: ["Alergie / leki","Kieszonkowe (zł/tydz.)","Godzina powrotu do domu","Inne uwagi"] },
+];
+const GENERAL_RULES = ["Posiłki / gotowanie","Sprzątanie (dyżury)","Ograniczenia TV/telefonu","Zakupy – budżet","Wyjścia z domu","Inne ważne informacje"];
+
+function buildRules() {
+  const el = document.getElementById("rulesList");
+  let html = "";
+
+  GIRL_RULES.forEach((gr, gi) => {
+    const g = gr.girl;
+    html += `<div class="girl-panel">
+      <h3 style="color:${g.color}">${g.emoji} ${g.name} <span class="badge" style="background:${g.color}">${g.age} lat</span></h3>`;
+    gr.fields.forEach((f, fi) => {
+      const key = `rule_girl_${gi}_${fi}`;
+      const val = load(key);
+      html += `<div class="rule-row">
+        <span class="rule-label">${f}:</span>
+        <span class="rule-val"><input type="text" placeholder="wpisz…" value="${val.replace(/"/g,'&quot;')}"
+          onchange="save('${key}',this.value)" oninput="save('${key}',this.value)"></span>
+      </div>`;
+    });
+    html += `</div>`;
+  });
+
+  // general
+  html += `<div class="girl-panel">
+    <h3 style="color:#37474F">🏠 Zasady ogólne</h3>`;
+  GENERAL_RULES.forEach((f, fi) => {
+    const key = `rule_general_${fi}`;
+    const val = load(key);
+    html += `<div class="rule-row">
+      <span class="rule-label">${f}:</span>
+      <span class="rule-val"><input type="text" placeholder="wpisz…" value="${val.replace(/"/g,'&quot;')}"
+        onchange="save('${key}',this.value)" oninput="save('${key}',this.value)"></span>
+    </div>`;
+  });
+  html += `</div>`;
+
+  el.innerHTML = html;
+}
+
+// ── page switching ────────────────────────────────────────────────────────────
+function showPage(name) {
+  document.querySelectorAll(".page").forEach(p => p.classList.remove("active"));
+  document.querySelectorAll(".nav-tab").forEach(t => t.classList.remove("active"));
+  document.getElementById("page-" + name).classList.add("active");
+  event.target.classList.add("active");
+}
+
+// ── init ──────────────────────────────────────────────────────────────────────
+buildLegend();
+buildWeekTabs();
+buildGrid();
+buildContacts();
+buildRules();
+</script>
+</body>
+</html>
