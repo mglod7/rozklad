@@ -162,8 +162,6 @@
     position: sticky;
     left: 0;
     z-index: 2;
-    word-wrap: break-word;
-    overflow-wrap: break-word;
   }
   .td-day .date-sub { font-size: 10px; font-weight: 600; opacity: .6; display: block; margin-top: 2px; }
   .td-cell {
@@ -182,17 +180,18 @@
     resize: none;
     outline: none;
     text-align: center;
+    padding: 4px;
+    min-height: 28px;
+    white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    white-space: normal;
-    min-height: 28px;
   }
   .td-cell input::placeholder, .td-cell textarea::placeholder { color: #B0BEC5; }
   
-  /* textarea dla zajęć */
+  /* textarea dla zajęć i godzin */
   .td-cell textarea {
     min-height: 80px;
-    padding: 4px;
+    text-align: left;
   }
 
   .td-notes {
@@ -211,10 +210,11 @@
     color: #546E7A;
     resize: none;
     outline: none;
+    min-height: 60px;
+    padding: 4px;
+    white-space: pre-wrap;
     word-wrap: break-word;
     overflow-wrap: break-word;
-    white-space: normal;
-    min-height: 60px;
   }
 
   /* weekend */
@@ -285,6 +285,7 @@
     outline: none;
     color: var(--gray);
     background: transparent;
+    white-space: normal;
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
@@ -321,6 +322,7 @@
     min-width: 200px;
     padding: 2px 4px;
     background: transparent;
+    white-space: normal;
     word-wrap: break-word;
     overflow-wrap: break-word;
   }
@@ -481,7 +483,7 @@ const WEEKS = [
 
 const SUB = ["Szkoła (od–do)", "Zajęcia pozalekcyjne", "Godz. zajęć", "Odbiór: skąd?"];
 const KEY_MAP = ["szkola","zajecia","godziny","odbior"];
-const FIELD_TYPES = ["text", "textarea", "text", "text"];
+const FIELD_TYPES = ["text", "textarea", "textarea", "text"];
 
 let currentWeek = 0;
 let hiddenGirls = new Set();
